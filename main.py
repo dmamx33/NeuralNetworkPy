@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+import math
 
 
 # Initial definitons
@@ -19,18 +21,46 @@ BIAS = 1
 # Neural network construction (Weights and Auxiliaries Matrices)
 W = np.zeros((NLAYERS-1, neu_max+BIAS, inp_max))
 INC = np.zeros((NLAYERS-1, neu_max+BIAS, inp_max))
-
+m = 1 # quitar
 for layer in range(NLAYERS-1):
     for neuron in range(N[layer+1]):
         for input in range(N[layer]+BIAS):
-            W[layer][input][neuron] = np.random.rand()
-            #m=m+1
+            W[layer][input][neuron] = m/10#np.random.rand()# quitar
+            m=m+1# quitar
             #print(str(m) + " - Layer=" + str(layer+1) + " Neuron=" + str(neuron+1) + " Input=" + str(input+1) + "->" + str(W[layer][input][neuron]))
 
 E = np.zeros((inp_max, NLAYERS-1))
 O = np.zeros((inp_max, NLAYERS-1))
 DELTA = np.zeros((inp_max, NLAYERS-1))
-
+########################EVALUAR##############################
+# quitar
+X = np.array([0.1, 0.1, 0.1])
+for layer in range(NLAYERS-1):
+    for neuron in range(N[layer+1]):
+        SUM = 0
+        for input in range(N[layer]+1):
+            if layer == 0:
+                if input == N[layer]:
+                    SUM = SUM + W[layer][input][neuron]
+                else:
+                    SUM = SUM + W[layer][input][neuron] * X[input]
+            else:
+                if input == N[layer]:
+                    SUM = SUM + W[layer][input][neuron]
+                else:
+                    SUM = SUM + W[layer][input][neuron] * O[input, layer-1]
+        E[neuron][layer] = SUM
+        O[neuron][layer] = 1 / (1 + math.exp(-1 * E[neuron][layer]))
+Y = O[0][NLAYERS-2]
+print(W)
+print("E=")
+print(E)
+print("O=")
+print(O)
+print("Y=")
+print(Y)
+sys.exit()
+######################################################
 # Obtener Datos de entreanmiento y prueba
 cuenta = 1
 r = 10 * np.random.rand()
