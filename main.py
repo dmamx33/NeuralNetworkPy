@@ -22,7 +22,7 @@ EPOCA = 50
 
 
 NLAYERS, W, INC, E, O, Y, DELTA = CONSTRUCCION(N)
-X = np.array([0.1, 0.1, 0.1])
+X = np.array([0.1, 0.1, 0.1])#only for test
 O, Y = PROPAGACION(W, X, E, O, Y, N, NLAYERS)
 print(W)
 print("E=")
