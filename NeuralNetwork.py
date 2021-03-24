@@ -52,3 +52,22 @@ def PROPAGACION(W,X,E,O,Y,N,NLAYERS):
         Y[output] = O[output][NLAYERS - 2]
 
     return O, Y
+
+def AJUSTAW(W,INC,DELTA,X,O,ETA,ALFA,N,NLAYERS):
+
+    for layer in range(NLAYERS - 1):
+        for neuron in range(N[layer + 1]):
+            SUM = 0
+            for input in range(N[layer] + 1):
+                if layer == 0:
+                    if input == N[layer]:
+                        AUX = 1
+                    else:
+                        AUX = X[input]
+                else:
+                    if input == N[layer]:
+                        AUX = 1
+                    else:
+                        AUX = O[neuron][layer-1]
+                INC[layer][input][neuron] = ETA * DELTA[neuron][layer] * AUX + ALFA * INC[layer][input][neuron]
+                W[layer][input][neuron] = W[layer][input][neuron] + INC[layer][input][neuron]
