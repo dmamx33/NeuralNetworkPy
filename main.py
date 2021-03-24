@@ -6,7 +6,7 @@ from NeuralNetwork import *
 
 
 # Initial definitons
-N = np.array([3,3,1]) # Layer Input: 3 - Hidden Layer 3 Neurons - Output Layer 1
+N = np.array([3,3,4,1]) # Layer Input: 3 - Hidden Layer 3 Neurons - Output Layer 1
 # NLAYERS = N.size
 # neu_max = np.max(N)         #Numero máximo de neuronas por cada
 # inp_max = np.max(N[1::])   #Maximo numero de entradas sin contar capa inicial
@@ -22,15 +22,24 @@ EPOCA = 50
 
 
 NLAYERS, W, INC, E, O, Y, DELTA = CONSTRUCCION(N)
-X = np.array([0.1, 0.1, 0.1])#only for test
+X = np.array([0.1, 0.1, 0.1])#only for test TODO: Quitar after test
 O, Y = PROPAGACION(W, X, E, O, Y, N, NLAYERS)
-print(W)
-print("E=")
-print(E)
-print("O=")
-print(O)
-print("Y=")
-print(Y)
+ERR = np.array([0])
+ERR = 0.3 - Y
+print(ERR)
+DELTA = RETROPROPAGACION(W, ERR, O, DELTA, N, NLAYERS)
+print(DELTA)
+# print("E=")
+# print(E)
+#print("O=")
+#print(O)
+# print("Y=")
+# print(Y)
+#DELTA=[[0.5, 0.2], [0.1, 0.7], [0.5, -0.4]]
+#(DELTA)
+#W, INC =  AJUSTAW(W,INC,DELTA,X,O,ETA,ALFA,N,NLAYERS)
+#print(W)
+#print(INC)
 sys.exit()
 ######################################################
 # Obtener Datos de entreanmiento y prueba
