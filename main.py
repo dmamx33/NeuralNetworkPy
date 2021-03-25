@@ -12,16 +12,14 @@ NDatosPrueba = 200
 ETA = 0.8
 ALFA = 0.2
 ErrorMinimo = 5e-3
-EPOCA = 50
+EPOCA = 10
 
 #Construction of the Neural Network
 NLAYERS, W, INC, E, O, Y, X,DELTA = CONSTRUCCION(N)
-print(X)
 #X = np.array([0.1, 0.1, 0.1])#only for test TODO: Quitar after test
 #O, Y = PROPAGACION(W, X, E, O, Y, N, NLAYERS)
 #DELTA = RETROPROPAGACION(W, ERR, O, DELTA, N, NLAYERS)
 #W, INC =  AJUSTAW(W,INC,DELTA,X,O,ETA,ALFA,N,NLAYERS)
-
 # Obtener Datos de entrenamiento y prueba para la funcion
 # F(z) = z^2 / z^2 -0.2z^1 +0.6
 cuenta = 1
@@ -50,11 +48,12 @@ M = y.max()
 y = (y-m) / (M-m)
 U = (U-m) / (M-m)
 
-#Entrenamiento TODO: Hacer lo mas perro
+#Entrenamiento
 Er = np.zeros(NDatosEntrenamiento)
 OutNN = np.zeros(NDatosEntrenamiento)
 ERROR = np.zeros(EPOCA)
 training = True
+
 for n in range(EPOCA):
     print(n+1)
     if training == True:
@@ -85,9 +84,24 @@ for n in range(EPOCA):
         if ERROR[n] < ErrorMinimo:
             training = False
 
-
 #Test de Red Neuronal con datos de prueba TODO: NO mames hay que hacer esto
+OutNNT = np.array(NDatosPrueba)
 
+for t in range(NDatosEntrenamiento,NDatosEntrenamiento+NDatosPrueba):
+    if t == 0:
+        X[0]=0
+        X[1]=0
+        X[2] = U[t]
+    elif t == 1:
+        X[0]= 0
+        X[1]= OutNNT[t-1]
+        X[2] = U[t]
+    else:
+        X[0] = OutNNT[t-2]
+        X[1] = OutNNT[t-1]
+        X[2] = U[t]
+    O, Y = PROPAGACION(W, X, E, O, Y, N, NLAYERS)
+    OutNNT[t] = Y
 #Normalizar datos de prueba TODO: Esto esta muy facil
 
 # Normalizacion de datos, convertilos a un valor entre 0 y 1.
@@ -100,6 +114,7 @@ n3 = 1
 n4 = 200
 TT = range(1, n2+1)
 
+plt.subplot(2, 1, 1)
 plt.plot(T[n3:n4],OutNN[n3:n4], label='Neural network')
 plt.plot(T[n3:n4], y[n3:n4], label='Output')
 plt.plot(T[n3:n4],U[n3:n4], label='Input')
@@ -108,6 +123,14 @@ plt.xlabel('Datos')
 plt.axis([n3, n4, 0, 1])
 plt.grid(True)
 plt.legend()
+
+plt.subplot(2, 1, 2)
+plt.plot(ERROR,label='Error')
+plt.title('Datos Entrenamiento')
+plt.xlabel('Datos')
+plt.grid(True)
+plt.legend()
+
 plt.show()
 
 #print(E)
