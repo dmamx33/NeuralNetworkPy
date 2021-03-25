@@ -17,16 +17,16 @@ def CONSTRUCCION(N):
     for layer in range(NLAYERS - 1):
         for neuron in range(N[layer + 1]):
             for input in range(N[layer] + BIAS):
-                W[layer][input][neuron] = m/10#np.random.rand()  # quitar TODO: Poner valor aleatorio
-                m = m + 1  # quitar
+                W[layer][input][neuron] = np.random.rand()
                 # print(str(m) + " - Layer=" + str(layer+1) + " Neuron=" + str(neuron+1) + " Input=" + str(input+1) + "->" + str(W[layer][input][neuron]))
 
     E = np.zeros((inp_max, NLAYERS - 1))
     O = np.zeros((inp_max, NLAYERS - 1))
     Y = np.transpose(np.zeros(nout_lay))
-    DELTA = np.ones((inp_max, NLAYERS - 1))*0.1 #TODO: quitar valor escalamiento
+    X = np.zeros((N[0]))
+    DELTA = np.zeros((inp_max, NLAYERS - 1))
 
-    return NLAYERS, W, INC, E, O, Y, DELTA
+    return NLAYERS, W, INC, E, O, Y, X, DELTA
 
 
 def PROPAGACION(W,X,E,O,Y,N,NLAYERS):
@@ -75,21 +75,25 @@ def AJUSTAW(W,INC,DELTA,X,O,ETA,ALFA,N,NLAYERS):
 def RETROPROPAGACION(W, ERR, O, DELTA, N, NLAYERS):
 
     for layer in range(NLAYERS-2,-1,-1):
-        print("k =")
-        print("       "+str(layer))
+        # print("k =")
+        # print("       "+str(layer))
         for neuron in range(N[layer + 1]):
-            print("j =")
-            print("       "+str(neuron))
+            # print("j =")
+            # print("       "+str(neuron))
             if layer == NLAYERS-2:
-                SUM = ERR[neuron]
-                print(SUM)
+                SUM = ERR#TODO: corregir esta madre
+                # print("SUM= ")
+                # print(SUM)
             else:
                 SUM = 0
-                print(SUM)
+                # print("SUM= ")
+                # print(SUM)
                 for input in range(N[layer + 2]):
                     SUM = SUM + W[layer+1][neuron][input] * DELTA[input][layer+1]
-                    print(input)
-                    print(SUM)
+                    # print("input= ")
+                    # print(input)
+                    # print("SUM= ")
+                    # print(SUM)
             DELTA[neuron][layer] = SUM * O[neuron][layer] * (1 - O[neuron][layer])
-            print("1111111111111111")
+            # print("1111111111111111")
     return DELTA

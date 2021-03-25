@@ -6,13 +6,7 @@ from NeuralNetwork import *
 
 
 # Initial definitons
-N = np.array([3,3,4,1]) # Layer Input: 3 - Hidden Layer 3 Neurons - Output Layer 1
-# NLAYERS = N.size
-# neu_max = np.max(N)         #Numero máximo de neuronas por cada
-# inp_max = np.max(N[1::])   #Maximo numero de entradas sin contar capa inicial
-# nout_lay = N[-1]
-# BIAS = 1
-
+N = np.array([3,3,1]) # Layer Input: 3 - Hidden Layer 3 Neurons - Output Layer
 NDatosEntrenamiento = 5000
 NDatosPrueba = 200
 ETA = 0.8
@@ -20,29 +14,16 @@ ALFA = 0.2
 ErrorMinimo = 5e-3
 EPOCA = 50
 
-
-NLAYERS, W, INC, E, O, Y, DELTA = CONSTRUCCION(N)
-X = np.array([0.1, 0.1, 0.1])#only for test TODO: Quitar after test
-O, Y = PROPAGACION(W, X, E, O, Y, N, NLAYERS)
-ERR = np.array([0])
-ERR = 0.3 - Y
-print(ERR)
-DELTA = RETROPROPAGACION(W, ERR, O, DELTA, N, NLAYERS)
-print(DELTA)
-# print("E=")
-# print(E)
-#print("O=")
-#print(O)
-# print("Y=")
-# print(Y)
-#DELTA=[[0.5, 0.2], [0.1, 0.7], [0.5, -0.4]]
-#(DELTA)
+#Construction of the Neural Network
+NLAYERS, W, INC, E, O, Y, X,DELTA = CONSTRUCCION(N)
+print(X)
+#X = np.array([0.1, 0.1, 0.1])#only for test TODO: Quitar after test
+#O, Y = PROPAGACION(W, X, E, O, Y, N, NLAYERS)
+#DELTA = RETROPROPAGACION(W, ERR, O, DELTA, N, NLAYERS)
 #W, INC =  AJUSTAW(W,INC,DELTA,X,O,ETA,ALFA,N,NLAYERS)
-#print(W)
-#print(INC)
-sys.exit()
-######################################################
-# Obtener Datos de entreanmiento y prueba
+
+# Obtener Datos de entrenamiento y prueba para la funcion
+# F(z) = z^2 / z^2 -0.2z^1 +0.6
 cuenta = 1
 r = 10 * np.random.rand()
 T = np.zeros(NDatosEntrenamiento+NDatosPrueba)
@@ -63,17 +44,54 @@ for t in range(NDatosEntrenamiento+NDatosPrueba):
     if t > 2:
         y[t] = 0.2 * y[t - 1] - 0.6*y[t-2] + U[t]
 
+#Escalamiento
+m = y.min()
+M = y.max()
+y = (y-m) / (M-m)
+U = (U-m) / (M-m)
+
 #Entrenamiento TODO: Hacer lo mas perro
+Er = np.zeros(NDatosEntrenamiento)
+OutNN = np.zeros(NDatosEntrenamiento)
+ERROR = np.zeros(EPOCA)
+training = True
+for n in range(EPOCA):
+    print(n+1)
+    if training == True:
+        for t in range(NDatosEntrenamiento):
+            if t == 0:
+                X[0]=0
+                X[1]=0
+                X[2] = U[t]
+            elif t == 1:
+                X[0]= 0
+                X[1]= OutNN[t-1]
+                X[2] = U[t]
+            else:
+                X[0] = OutNN[t-2]
+                X[1] = OutNN[t-1]
+                X[2] = U[t]
+            O, Y = PROPAGACION(W, X, E, O, Y, N, NLAYERS)
+            OutNN[t] = Y
+            ERR = y[t] - OutNN[t]
+            #print(ERR)
+            sum = 0
+            for a in range(N[NLAYERS-1]):
+                sum = sum + ERR
+            Er[t] = math.sqrt(sum * sum)
+            DELTA = RETROPROPAGACION(W, ERR, O, DELTA, N, NLAYERS)
+            W, INC = AJUSTAW(W,INC,DELTA,X,O,ETA,ALFA,N,NLAYERS)
+        ERROR[n] = np.mean(Er)
+        if ERROR[n] < ErrorMinimo:
+            training = False
+
 
 #Test de Red Neuronal con datos de prueba TODO: NO mames hay que hacer esto
 
 #Normalizar datos de prueba TODO: Esto esta muy facil
 
 # Normalizacion de datos, convertilos a un valor entre 0 y 1.
-m = y.min()
-M = y.max()
-# y = (y-m) / (M-m)
-# U = (U-m) / (M-m)
+
 
 # Grafica algo al menos
 n1 = NDatosEntrenamiento
@@ -82,11 +100,12 @@ n3 = 1
 n4 = 200
 TT = range(1, n2+1)
 
+plt.plot(T[n3:n4],OutNN[n3:n4], label='Neural network')
 plt.plot(T[n3:n4], y[n3:n4], label='Output')
 plt.plot(T[n3:n4],U[n3:n4], label='Input')
 plt.title('Datos Entrenamiento')
-plt.xlabel('Tiempo')
-plt.axis([n3, n4, -2, 10])
+plt.xlabel('Datos')
+plt.axis([n3, n4, 0, 1])
 plt.grid(True)
 plt.legend()
 plt.show()
