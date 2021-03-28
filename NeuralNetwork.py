@@ -11,7 +11,6 @@ def CONSTRUCCION(N):
 
     W = np.zeros((NLAYERS - 1, neu_max + BIAS, inp_max))
     INC = np.zeros((NLAYERS - 1, neu_max + BIAS, inp_max))
-    m = 1  # quitar
     for layer in range(NLAYERS - 1):
         for neuron in range(N[layer + 1]):
             for input in range(N[layer] + BIAS):
@@ -73,25 +72,12 @@ def AJUSTAW(W,INC,DELTA,X,O,ETA,ALFA,N,NLAYERS):
 def RETROPROPAGACION(W, ERR, O, DELTA, N, NLAYERS):
 
     for layer in range(NLAYERS-2,-1,-1):
-        # print("k =")
-        # print("       "+str(layer))
         for neuron in range(N[layer + 1]):
-            # print("j =")
-            # print("       "+str(neuron))
             if layer == NLAYERS-2:
                 SUM = ERR#TODO: corregir esta madre
-                # print("SUM= ")
-                # print(SUM)
             else:
                 SUM = 0
-                # print("SUM= ")
-                # print(SUM)
                 for input in range(N[layer + 2]):
                     SUM = SUM + W[layer+1][neuron][input] * DELTA[input][layer+1]
-                    # print("input= ")
-                    # print(input)
-                    # print("SUM= ")
-                    # print(SUM)
             DELTA[neuron][layer] = SUM * O[neuron][layer] * (1 - O[neuron][layer])
-            # print("1111111111111111")
     return DELTA
